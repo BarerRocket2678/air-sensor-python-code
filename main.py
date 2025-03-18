@@ -11,8 +11,8 @@ import board
 import busio
 from digitalio import DigitalInOut, Direction, Pull
 from adafruit_pm25.i2c import PM25_I2C
-from flask import Flask
-
+from flask import Flask, render_template, jsonify
+import threading
 
 reset_pin = None
 # If you have a GPIO, its not a bad idea to connect it to the RESET pin
@@ -50,17 +50,35 @@ print("Found PM2.5 sensor, reading data...")
 
 app = Flask(__name__)
 
+time.sleep(3)
+aqdata = pm25.read()
+
+def get_data():
+    while True:
+        time.sleep(10)
+    
+        try:
+            global aqdata 
+            aqdata = pm25.read()
+            print(aqdata["pm25 env"])
+    
+        except RuntimeError:
+            continue
+
 @app.route('/')
 def home():
     return render_template('index.html')
 
 @app.route('/sensor')
 def show_data():
-    return jsonify({"PM2.5": aqdata["pm25 env"]})
+    global aqdata
+    return jsonify({"pm25": aqdata["pm25 env"]})
 
-if __name__ = '__main__':
+if __name__ == '__main__':
+    sensor_thread = threading.Thread(target=get_data)
+    sensor_thread.daemon = True
+    sensor_thread.start()
     app.run(host='0.0.0.0', port=5000, debug=True)
-
 """
 while True:
     time.sleep(1)

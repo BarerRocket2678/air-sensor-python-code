@@ -11,6 +11,7 @@ import board
 import busio
 from digitalio import DigitalInOut, Direction, Pull
 from adafruit_pm25.i2c import PM25_I2C
+from flask import Flask
 
 
 reset_pin = None
@@ -47,6 +48,20 @@ pm25 = PM25_UART(uart, reset_pin)
 
 print("Found PM2.5 sensor, reading data...")
 
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return render_template('index.html')
+
+@app.route('/sensor')
+def show_data():
+    return jsonify({"PM2.5": aqdata["pm25 env"]})
+
+if __name__ = '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)
+
+"""
 while True:
     time.sleep(1)
 
@@ -78,3 +93,4 @@ while True:
     print("Particles > 5.0um / 0.1L air:", aqdata["particles 50um"])
     print("Particles > 10 um / 0.1L air:", aqdata["particles 100um"])
     print("---------------------------------------")
+"""

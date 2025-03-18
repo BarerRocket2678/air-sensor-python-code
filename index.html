@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Air Quality Monitor</title>
+    <script>
+        function fetchSensorData() {
+            fetch('/sensor')  // Call Flask API
+                .then(response => response.json())  // Parse JSON response
+                .then(data => {
+                    document.getElementById('sensor-data').innerText = `Air Quality: ${data.air_quality}`;
+                })
+                .catch(error => console.error('Error fetching sensor data:', error));
+        }
+
+        // Refresh data every 5 seconds
+        setInterval(fetchSensorData, 5000);
+
+        // Fetch data when the page loads
+        window.onload = fetchSensorData;
+    </script>
+</head>
+<body>
+    <h1>Real-time Air Quality Sensor Data</h1>
+    <p id="sensor-data">Loading...</p>
+</body>
+</html>

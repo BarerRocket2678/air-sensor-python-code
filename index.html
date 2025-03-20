@@ -7,9 +7,14 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         let dataChart;
+        let dataCharthr;
         let timeLabels = [];
+        let timeLabelshr = [];
         let pm25 = [];
         let pm100 = [];
+        let pm25hr = [];
+        let pm100hr = [];
+        let count = 0;
 
         function fetchSensorData() {
             fetch('/sensor')
@@ -28,7 +33,7 @@
                                 pm25.push(data["pm25"]);
                                 pm100.push(data["pm100"]);
 
-                                if (timeLabels.length > 360) {
+                                if (timeLabels.length > 60) {
                                         timeLabels.shift();
                                         pm25.shift();
                                         pm100.shift();
@@ -39,6 +44,23 @@
                                 dataChart.data.datasets[1].data = pm100;
                                 dataChart.update();
 
+                                count++;
+                                if (count % 60 == 0) {
+                                        timeLabelshr.push(time);
+                                        pm25hr.push(data["pm25"]);
+                                        pm100hr.push(data["pm100"]);
+
+                                        if (timeLabelshr > 24) {
+                                                timeLabelshr.shift();
+                                                pm25hr.shift();
+                                                pm100hr.shift();
+                                        }
+
+                                        dataCharthr.data.labels = timeLabelshr;
+                                        dataCharthr.data.datasets[0].data = pm25hr;
+                                        dataCharthr.data.datasets[1].data = pm100hr;
+                                        dataCharthr.update();
+                                }
 
                                 document.getElementById('data25').innerText = `PM 2.5: ${data["pm25"]}`;
                                 document.getElementById('data100').innerText = `PM 10.0: ${data["pm100"]}`;
@@ -57,12 +79,21 @@
                         .then(response => response.json())
                         .then (database => {
                                 if (database.length > 0) {
-                                        database.forEach(entry => {
+                                        database.forEach((entry, index) => {
                                                 let entrytimeserver = new Date(entry["time"]);
                                                 timeLabels.push(entrytimeserver.toLocaleString());
                                                 pm25.push(entry.pm25);
                                                 pm100.push(entry.pm100);
+
+                                                if (index % 60 == 0) {
+                                                        pm25hr.push(entry.pm25)
+                                                        pm100hr.push(entry.pm25)
+                                                        timeLabelshr.push(entrytimeserver.toLocaleString());
+                                                }
                                         });
+
+                                        dataChart.update();
+                                        dataCharthr.update();
                                 }
                         })
                         .catch(error => console.error("Could not load database:", error));
@@ -97,8 +128,38 @@
                         }
                 });
 
+                const ctx2 = document.getElementById('Charthr').getContext('2d')
+                dataCharthr = new Chart(ctx2, {
+                        type: 'line',
+                        data: {
+                                labels: [],
+                                datasets: [
+                                        {
+                                                label: 'PM 2.5 (US AQI)',
+                                                borderColor: 'red',
+                                                borderWidth: 2,
+                                                fill: false,
+                                                data: []
+                                        },
+                                        { 
+                                                label: 'PM 10.0 (US AQI)',
+                                                borderColor: 'blue',
+                                                borderWidth: 2,
+                                                fill: false,
+                                                data: []
+                                        }
+                                ]
+                        },
+                        options: {
+                                responsive : true,
+                                scales: {
+                                        x: { title: { display: true, text: 'Time' } },
+                                        y: { title: { display: true, text: 'AQI level' }, beginAtZero: true }
+                                }
+                        }
+               });
                 fetchSensorData();
-                setInterval(fetchSensorData, 10000);
+                setInterval(fetchSensorData, 60000);
 
         };
     </script>
@@ -108,5 +169,6 @@
     <p id="data25">Loading...</p>
     <p id="data100">Loading...</p>
     <canvas id="Chart" width="1920" height="1080"></canvas>
+    <canvas id="Charthr" width="1920" height="1080"></canvas>
 </body>
 </html>

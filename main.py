@@ -141,11 +141,8 @@ def get_data():
                 except:
                     continue
             try:
-                global aqi25, aqi100
                 log.append({"time": datetime.datetime.now().astimezone(
                 ).isoformat(), "pm25": aqi_pm25(statistics.mean(aqi25_tmp)), "pm100": aqi_pm100(statistics.mean(aqi100_tmp))})
-                aqi25 = aqi_pm25(statistics.mean(aqi25_tmp))
-                aqi100 = aqi_pm100(statistics.mean(aqi100_tmp))
                 aqi25_hr.append(statistics.mean(aqi25_tmp))
                 aqi100_hr.append(statistics.mean(aqi100_tmp))
 
@@ -179,6 +176,10 @@ def get_data():
 @app.route('/')
 def home():
     return render_template('index.html')
+
+@app.route('/notes')
+def notes():
+    return render_template('notes.html')
 
 @app.route('/history', methods=['GET'])
 def history():

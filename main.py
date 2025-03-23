@@ -60,6 +60,14 @@ if os.path.exists('data.json'):
 else:
     log = []
 
+if os.path.exists('data_hr.json'):
+    with open('data_hr.json', 'r') as filehr:
+        loghr = json.load(filehr)
+else:
+    loghr = []
+
+
+
 time.sleep(3)
 aqdata = pm25.read()
 
@@ -113,64 +121,82 @@ def aqi_pm25(pm):
     else:
         return (500.0)
 
-aqi25 = aqi_pm25(aqdata["pm25 env"])
-aqi100 = aqi_pm100(aqdata["pm100 env"])
-
 def get_data():
     while True:
-        aqi25_tmp = []
-        aqi100_tmp = []
+        aqi25_hr = []
+        aqi100_hr = []
 
-        for x in range(6):
+
+        for x in range(60):
+            aqi25_tmp = []
+            aqi100_tmp = []
+
+            for x in range(6):
+                try:
+                    time.sleep(10)
+                    aqdata = pm25.read()
+                    aqi25_tmp.append(aqdata["pm25 env"])
+                    aqi100_tmp.append(aqdata["pm100 env"])
+
+                except:
+                    continue
             try:
-                time.sleep(10)
-                aqdata = pm25.read()
-                aqi25_tmp.append(aqdata["pm25 env"])
-                aqi100_tmp.append(aqdata["pm100 env"])
-            
-            except:
+                global aqi25, aqi100
+                log.append({"time": datetime.datetime.now().astimezone(
+                ).isoformat(), "pm25": aqi_pm25(statistics.mean(aqi25_tmp)), "pm100": aqi_pm100(statistics.mean(aqi100_tmp))})
+                aqi25 = aqi_pm25(statistics.mean(aqi25_tmp))
+                aqi100 = aqi_pm100(statistics.mean(aqi100_tmp))
+                aqi25_hr.append(statistics.mean(aqi25_tmp))
+                aqi100_hr.append(statistics.mean(aqi100_tmp))
+
+                with open('data_tmp.json', 'w') as file_tmp:
+                    json.dump(log[-120:], file_tmp)
+                    file_tmp.flush()
+                    os.fsync(file_tmp.fileno())
+
+                os.replace('data_tmp.json', 'data.json')
+
+            except Exception as e:
+                print(e)
                 continue
+        
         try:
-            global aqi25, aqi100
-            log.append({"time": datetime.datetime.now().astimezone(
-            ).isoformat(), "pm25": aqi_pm25(statistics.mean(aqi25_tmp)), "pm100": aqi_pm100(statistics.mean(aqi100_tmp))})
-            aqi25 = aqi_pm25(statistics.mean(aqi25_tmp))
-            aqi100 = aqi_pm100(statistics.mean(aqi100_tmp))
+            loghr.append({"time": datetime.datetime.now().astimezone().isoformat(), "pm25_hr": aqi_pm25(statistics.mean(aqi25_hr)), "pm100_hr": aqi_pm100(statistics.mean(aqi100_hr))})
 
-            with open('data_tmp.json', 'w') as file_tmp:
-                json.dump(log, file_tmp)
-                file_tmp.flush()
-                os.fsync(file_tmp.fileno())
-
-            os.replace('data_tmp.json', 'data.json')
+            with open('data_hr_tmp.json', 'w') as file_hr_tmp:
+                json.dump(loghr[-48:], file_hr_tmp)
+                file_hr_tmp.flush()
+                os.fsync(file_hr_tmp.fileno())
+            
+            os.replace('data_hr_tmp.json', 'data_hr.json')
 
         except Exception as e:
             print(e)
             continue
+            
 
 
 @app.route('/')
 def home():
     return render_template('index.html')
 
-
-@app.route('/sensor')
-def show_data():
-    global aqdata
-    global aqi25
-    global aqi100
-    return jsonify({"pm25": aqi25, "pm100": aqi100, "time": datetime.datetime.now().astimezone().isoformat()})
-
-
 @app.route('/history', methods=['GET'])
 def history():
     try:
         with open('data.json', 'r') as file:
             database = json.load(file)
-        return jsonify(database)
+        return jsonify(database[-60:])
     except FileNotFoundError:
         return jsonify([])
 
+@app.route('/history_hr', methods=['GET'])
+def history_hr():
+    try:
+        with open('data_hr.json', 'r') as file_hr:
+            database_hr = json.load(file_hr)
+        return jsonify(database_hr[-24:])
+    except FileNotFoundError:
+        return jsonify([])
 
 if __name__ == '__main__':
     sensor_thread = threading.Thread(target=get_data)

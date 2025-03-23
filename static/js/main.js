@@ -1,0 +1,258 @@
+window.onload = function() {
+        let dataChart;
+        let dataChart_hr;
+        let timeLabels = [];
+        let timeLabels_hr = [];
+        let pm25 = [];
+        let pm100 = [];
+        let pm25_hr = [];
+        let pm100_hr = [];
+        fetch('/history')
+                .then(response => response.json())
+                .then (database => {
+                        if (database.length > 0) {
+                                database.forEach((entry, index) => {
+                                        let entrytimeserver = new Date(entry["time"]);
+                                        timeLabels.push(entrytimeserver.toLocaleString());
+                                        pm25.push(entry.pm25);
+                                        pm100.push(entry.pm100);
+
+                                });
+
+                                dataChart.data.labels = timeLabels;
+                                dataChart.data.datasets[0].data = pm25;
+                                dataChart.data.datasets[1].data = pm100;
+                                dataChart.update();
+                                let status = "Good";
+                                let effects = ["Effects: None.", "Effects: Consider reducing exertion for sensitive people.", "Effects: Reduce exertion for sensitive people, people with asthma, and people with heart disease.", "Effects: Avoid exertion for sensitive people, people with asthma, and people with heart disease. The general public should reduce exertion.", "Effects: Avoid all activity for sensitive people, people with asthma, and people with heart disease. The general public should avoid exertion.", "Effects: Avoid contact with contaminated air for sensitive people, people with asthma, and people with heart disease. The general public should avoid all activity"]; 
+                                if (pm25[pm25.length - 1] > pm100[pm100.length - 1]) {
+                                        if(pm25[pm25.length - 1] == 500) {            
+                                                document.getElementById("Status").innerHTML = "Status: Hazardous (DANGER: Levels have hit the max of the AQI system!";
+                                                document.getElementById("Effects").innerHTML = effects[5];
+                                        }
+                                        else if(pm25[pm25.length - 1] > 300) {
+                                                document.getElementById("Status").innerHTML = "Status: Hazardous";
+                                                document.getElementById("Effects").innerHTML = effects[5];
+                                        }
+                                        else if(pm25[pm25.length - 1] > 200) {
+                                                document.getElementById("Status").innerHTML = "Status: Very Unhealthy";
+                                                document.getElementById("Effects").innerHTML = effects[4];
+                                        }
+                                        else if(pm25[pm25.length - 1] > 150) {
+                                                document.getElementById("Status").innerHTML = "Status: Unhealthy";
+                                                document.getElementById("Effects").innerHTML = effects[3];
+                                        }
+                                        else if(pm25[pm25.length - 1] > 100) {
+                                                document.getElementById("Status").innerHTML = "Status: Unhealthy for sensitive groups";
+                                                document.getElementById("Effects").innerHTML = effects[2];
+                                        }
+                                        else if(pm25[pm25.length - 1] > 50) {
+                                                document.getElementById("Status").innerHTML = "Status: Moderate";
+                                                document.getElementById("Effects").innerHTML = effects[1];
+                                        }
+                                        else if(pm25[pm25.length - 1] >= 0) {
+                                                document.getElementById("Status").innerHTML = "Status: Good";
+                                                document.getElementById("Effects").innerHTML = effects[0];
+                                        }
+
+
+                                }
+                                else {
+                                        if(pm100[pm100.length - 1] == 500) {            
+                                                document.getElementById("Status").innerHTML = "Status: Hazardous (DANGER: Levels have hit the max of the AQI system!";
+                                                document.getElementById("Effects").innerHTML = effects[5];
+                                        }
+                                        else if(pm100[pm100.length - 1] > 300) {
+                                                document.getElementById("Status").innerHTML = "Status: Hazardous";
+                                                document.getElementById("Effects").innerHTML = effects[5];
+                                        }
+                                        else if(pm100[pm100.length - 1] > 200) {
+                                                document.getElementById("Status").innerHTML = "Status: Very Unhealthy";
+                                                document.getElementById("Effects").innerHTML = effects[4];
+                                        }
+                                        else if(pm100[pm100.length - 1] > 150) {
+                                                document.getElementById("Status").innerHTML = "Status: Unhealthy";
+                                                document.getElementById("Effects").innerHTML = effects[3];
+                                        }
+                                        else if(pm100[pm100.length - 1] > 100) {
+                                                document.getElementById("Status").innerHTML = "Status: Unhealthy for sensitive groups";
+                                                document.getElementById("Effects").innerHTML = effects[2];
+                                        }
+                                        else if(pm100[pm100.length - 1] > 50) {
+                                                document.getElementById("Status").innerHTML = "Status: Moderate";
+                                                document.getElementById("Effects").innerHTML = effects[1];
+                                        }
+                                        else if(pm100[pm100.length - 1] >= 0) {
+                                                document.getElementById("Status").innerHTML = "Status: Good";
+                                                document.getElementById("Effects").innerHTML = effects[0];
+                                        }
+                                }
+
+                        }
+                }).catch(error => console.error("Could not load database:", error));
+
+        fetch('/history_hr')
+                .then(response_hr => response_hr.json())
+                .then (database_hr => {
+                        if (database_hr.length > 0) {
+                                database_hr.forEach((entry, index) => {
+                                        let entrytimeserver = new Date(entry["time"]);
+                                        timeLabels_hr.push(entrytimeserver.toLocaleString());
+                                        pm25_hr.push(entry.pm25_hr);
+                                        pm100_hr.push(entry.pm100_hr)
+                                });
+
+                                dataChart_hr.data.labels = timeLabels_hr;
+                                dataChart_hr.data.datasets[0].data = pm25_hr;
+                                dataChart_hr.data.datasets[1].data = pm100_hr;
+                                dataChart_hr.update();
+                        }
+                }).catch(error => console.error("Could not load database:", error));
+
+        const ctx = document.getElementById('Chart').getContext('2d')
+        dataChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                        labels: [],
+                        datasets: [
+                                {
+                                        label: 'PM 2.5',
+                                        fill: false,
+                                        data: [],
+                                        borderColor: 'white',
+                                        backgroundColor: 'white',
+                                        segment: {
+                                                borderColor: ctx => {
+                                                        const y = ctx.p1.parsed.y;
+
+                                                        if (y > 301) return 'maroon';
+                                                        if (y > 201) return 'purple';
+                                                        if (y > 151) return 'red';
+                                                        if (y > 101) return 'orange';
+                                                        if (y > 51) return 'yellow';
+                                                        return 'green';
+                                                }
+                                        },
+                                        pointBackgroundColor: 'white',
+                                        pointBorderColor: 'white',
+                                        tension: 0.5
+                                },
+                                {
+                                        label: 'PM 10.0',
+                                        fill: false,
+                                        data: [],
+                                        borderColor: 'black',
+                                        backgroundColor: 'black',
+                                        segment: {
+                                                borderColor: ctx => {
+                                                const y = ctx.p1.parsed.y;
+
+                                                if (y > 301) return 'maroon';     
+                                                if (y > 201) return 'purple';     
+                                                if (y > 151) return 'red';
+                                                if (y > 101) return 'orange';
+                                                if (y > 51) return 'yellow';
+                                                return 'green';
+                                                }
+                                        },
+                                        pointBackgroundColor: 'black',
+                                        pointBorderColor: 'black',
+                                        tension: 0.5
+                                }
+
+                        ]
+                },
+                options: {
+                        responsive : true,
+                        scales: {
+                                x: { 
+                                        grid: {color: '#8c8c8c'},
+                                        title: { 
+                                                display: true, text: 'Time' 
+                                        } 
+                                },
+                                y: { 
+                                        grid: {color: '#8c8c8c'},
+                                        title: { 
+                                                display: true, text: 'AQI level' 
+                                        }, 
+                                        beginAtZero: true 
+                                }
+                        }
+                }
+        });
+
+        const ctx2 = document.getElementById('Chart_hr').getContext('2d')
+        dataChart_hr = new Chart(ctx2, {
+                type: 'line',
+                data: {
+                        labels: [],
+                        datasets: [
+                                {
+                                        label: 'PM 2.5 hour mean',
+                                        fill: false,
+                                        data: [],
+                                        borderColor: 'white',
+                                        backgroundColor: 'white',
+                                        segment: {
+                                                borderColor: ctx => {
+                                                        const y = ctx.p1.parsed.y;
+
+                                                        if (y > 301) return 'maroon';
+                                                        if (y > 201) return 'purple';
+                                                        if (y > 151) return 'red';
+                                                        if (y > 101) return 'orange';
+                                                        if (y > 51) return 'yellow';
+                                                        return 'green';
+                                                }
+                                        },
+                                        pointBackgroundColor: 'white',
+                                        pointBorderColor: 'white',
+                                        tension: 0.5
+                                },
+                                {
+                                        label: 'PM 10.0 hour mean',
+                                        fill: false,
+                                        data: [],
+                                        borderColor: 'black',
+                                        backgroundColor: 'black',
+                                        segment: {
+                                                borderColor: ctx => {
+                                                const y = ctx.p1.parsed.y;
+
+                                                if (y > 301) return 'maroon';     
+                                                if (y > 201) return 'purple';     
+                                                if (y > 151) return 'red';
+                                                if (y > 101) return 'orange';
+                                                if (y > 51) return 'yellow';
+                                                return 'green';
+                                                }
+                                        },
+                                        pointBackgroundColor: 'black',
+                                        pointBorderColor: 'black',
+                                        tension: 0.5
+                                }
+
+                        ]
+                },
+                options: {
+                        responsive : true,
+                        scales: {
+                                x: { 
+                                        grid: {color: '#8c8c8c'},
+                                        title: { 
+                                                display: true, text: 'Time' 
+                                        } 
+                                },
+                                y: { 
+                                        grid: {color: '#8c8c8c'},
+                                        title: { 
+                                                display: true, text: 'AQI level' 
+                                        }, 
+                                        beginAtZero: true 
+                                }
+                        }
+                }
+
+       });
+}

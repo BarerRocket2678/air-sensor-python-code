@@ -31,6 +31,71 @@
                                         dataChart.data.datasets[0].data = pm25;
                                         dataChart.data.datasets[1].data = pm100;
                                         dataChart.update();
+                                        let status = "Good";
+                                        let effects = ["Effects: None.", "Effects: Consider reducing exertion for sensitive people.", "Effects: Reduce exertion for sensitive people, people with asthma, and people with heart disease.", "Effects: Avoid exertion for sensitive people, people with asthma, and people with heart disease. The general public should reduce exertion.", "Effects: Avoid all activity for sensitive people, people with asthma, and people with heart disease. The general public should avoid exertion.", "Effects: Avoid contact with contaminated air for sensitive people, people with asthma, and people with heart disease. The general public should avoid all activity"]; 
+                                        if (pm25[pm25.length - 1] > pm100[pm100.length - 1]) {
+                                                if(pm25[pm25.length - 1] == 500) {            
+                                                        document.getElementById("Status").innerHTML = "Status: Hazardous (DANGER: Levels have hit the max of the AQI system!";
+                                                        document.getElementById("Effects").innerHTML = effects[5];
+                                                }
+                                                else if(pm25[pm25.length - 1] > 300) {
+                                                        document.getElementById("Status").innerHTML = "Status: Hazardous";
+                                                        document.getElementById("Effects").innerHTML = effects[5];
+                                                }
+                                                else if(pm25[pm25.length - 1] > 200) {
+                                                        document.getElementById("Status").innerHTML = "Status: Very Unhealthy";
+                                                        document.getElementById("Effects").innerHTML = effects[4];
+                                                }
+                                                else if(pm25[pm25.length - 1] > 150) {
+                                                        document.getElementById("Status").innerHTML = "Status: Unhealthy";
+                                                        document.getElementById("Effects").innerHTML = effects[3];
+                                                }
+                                                else if(pm25[pm25.length - 1] > 100) {
+                                                        document.getElementById("Status").innerHTML = "Status: Unhealthy for sensitive groups";
+                                                        document.getElementById("Effects").innerHTML = effects[2];
+                                                }
+                                                else if(pm25[pm25.length - 1] > 50) {
+                                                        document.getElementById("Status").innerHTML = "Status: Moderate";
+                                                        document.getElementById("Effects").innerHTML = effects[1];
+                                                }
+                                                else if(pm25[pm25.length - 1] >= 0) {
+                                                        document.getElementById("Status").innerHTML = "Status: Good";
+                                                        document.getElementById("Effects").innerHTML = effects[0];
+                                                }
+
+
+                                        }
+                                        else {
+                                                if(pm100[pm100.length - 1] == 500) {            
+                                                        document.getElementById("Status").innerHTML = "Status: Hazardous (DANGER: Levels have hit the max of the AQI system!";
+                                                        document.getElementById("Effects").innerHTML = effects[5];
+                                                }
+                                                else if(pm100[pm100.length - 1] > 300) {
+                                                        document.getElementById("Status").innerHTML = "Status: Hazardous";
+                                                        document.getElementById("Effects").innerHTML = effects[5];
+                                                }
+                                                else if(pm100[pm100.length - 1] > 200) {
+                                                        document.getElementById("Status").innerHTML = "Status: Very Unhealthy";
+                                                        document.getElementById("Effects").innerHTML = effects[4];
+                                                }
+                                                else if(pm100[pm100.length - 1] > 150) {
+                                                        document.getElementById("Status").innerHTML = "Status: Unhealthy";
+                                                        document.getElementById("Effects").innerHTML = effects[3];
+                                                }
+                                                else if(pm100[pm100.length - 1] > 100) {
+                                                        document.getElementById("Status").innerHTML = "Status: Unhealthy for sensitive groups";
+                                                        document.getElementById("Effects").innerHTML = effects[2];
+                                                }
+                                                else if(pm100[pm100.length - 1] > 50) {
+                                                        document.getElementById("Status").innerHTML = "Status: Moderate";
+                                                        document.getElementById("Effects").innerHTML = effects[1];
+                                                }
+                                                else if(pm100[pm100.length - 1] >= 0) {
+                                                        document.getElementById("Status").innerHTML = "Status: Good";
+                                                        document.getElementById("Effects").innerHTML = effects[0];
+                                                }
+                                        }
+
                                 }
                         }).catch(error => console.error("Could not load database:", error));
 
@@ -62,8 +127,8 @@
                                                 label: 'PM 2.5',
                                                 fill: false,
                                                 data: [],
-                                                borderColor: 'grey',
-                                                backgroundColor: 'grey',
+                                                borderColor: 'white',
+                                                backgroundColor: 'white',
                                                 segment: {
                                                         borderColor: ctx => {
                                                                 const y = ctx.p1.parsed.y;
@@ -76,8 +141,8 @@
                                                                 return 'green';
                                                         }
                                                 },
-                                                pointBackgroundColor: 'grey',
-                                                pointBorderColor: 'grey',
+                                                pointBackgroundColor: 'white',
+                                                pointBorderColor: 'white',
                                                 tension: 0.5
                                         },
                                         {
@@ -108,8 +173,19 @@
                         options: {
                                 responsive : true,
                                 scales: {
-                                        x: { title: { display: true, text: 'Time' } },
-                                        y: { title: { display: true, text: 'AQI level' }, beginAtZero: true }
+                                        x: { 
+                                                grid: {color: '#8c8c8c'},
+                                                title: { 
+                                                        display: true, text: 'Time' 
+                                                } 
+                                        },
+                                        y: { 
+                                                grid: {color: '#8c8c8c'},
+                                                title: { 
+                                                        display: true, text: 'AQI level' 
+                                                }, 
+                                                beginAtZero: true 
+                                        }
                                 }
                         }
                 });
@@ -121,11 +197,11 @@
                                 labels: [],
                                 datasets: [
                                         {
-                                                label: 'PM 2.5',
+                                                label: 'PM 2.5 hour mean',
                                                 fill: false,
                                                 data: [],
-                                                borderColor: 'grey',
-                                                backgroundColor: 'grey',
+                                                borderColor: 'white',
+                                                backgroundColor: 'white',
                                                 segment: {
                                                         borderColor: ctx => {
                                                                 const y = ctx.p1.parsed.y;
@@ -138,12 +214,12 @@
                                                                 return 'green';
                                                         }
                                                 },
-                                                pointBackgroundColor: 'grey',
-                                                pointBorderColor: 'grey',
+                                                pointBackgroundColor: 'white',
+                                                pointBorderColor: 'white',
                                                 tension: 0.5
                                         },
                                         {
-                                                label: 'PM 10.0',
+                                                label: 'PM 10.0 hour mean',
                                                 fill: false,
                                                 data: [],
                                                 borderColor: 'black',
@@ -167,27 +243,41 @@
 
                                 ]
                         },
-
-
                         options: {
                                 responsive : true,
                                 scales: {
-                                        x: { title: { display: true, text: 'Time' } },
-                                        y: { title: { display: true, text: 'AQI level' }, beginAtZero: true }
+                                        x: { 
+                                                grid: {color: '#8c8c8c'},
+                                                title: { 
+                                                        display: true, text: 'Time' 
+                                                } 
+                                        },
+                                        y: { 
+                                                grid: {color: '#8c8c8c'},
+                                                title: { 
+                                                        display: true, text: 'AQI level' 
+                                                }, 
+                                                beginAtZero: true 
+                                        }
                                 }
                         }
+
                });
         };
     </script>
     <style>
-
-
+        body {
+                background-color: #121212;
+                color: #ffffff;
+        }
     </style>
 </head>
 <body>
-    <h1>Air Quality Data</h1>
-    <a href=https://www.airnow.gov/aqi/aqi-basics/>Info on safe levels can be found here</a>
-    <canvas id="Chart" width="1920" height="1080"></canvas>
-    <canvas id="Chart_hr" width="1920" height="1080"></canvas>
+        <h1 id="Status"></h1>
+        <h3 id="Effects"></h3>
+        <a href=https://www.airnow.gov/aqi/aqi-basics/>Info on safe levels can be found here</a>
+        <canvas id="Chart" width="1920" height="1080"></canvas>
+        <canvas id="Chart_hr" width="1920" height="1080"></canvas>
+        <a href="{{url_for('notes')}}">Notes and Considerations</a>
 </body>
 </html>

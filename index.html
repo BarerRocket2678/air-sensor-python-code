@@ -7,73 +7,13 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         let dataChart;
-        let dataCharthr;
+        let dataChart_hr;
         let timeLabels = [];
-        let timeLabelshr = [];
+        let timeLabels_hr = [];
         let pm25 = [];
         let pm100 = [];
-        let pm25hr = [];
-        let pm100hr = [];
-        let count = 0;
-
-        function fetchSensorData() {
-            fetch('/sensor')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Incorrect response from server!');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                        if (data && data["pm25"] !== undefined && data["pm100"] !== undefined) {
-                                let timeserver = new Date(data["time"]);
-
-                                let time = timeserver.toLocaleString();
-                                timeLabels.push(time);
-                                pm25.push(data["pm25"]);
-                                pm100.push(data["pm100"]);
-
-                                if (timeLabels.length > 60) {
-                                        timeLabels.shift();
-                                        pm25.shift();
-                                        pm100.shift();
-                                }
-
-                                dataChart.data.labels = timeLabels;
-                                dataChart.data.datasets[0].data = pm25;
-                                dataChart.data.datasets[1].data = pm100;
-                                dataChart.update();
-
-                                count++;
-                                if (count % 60 == 0) {
-                                        timeLabelshr.push(time);
-                                        pm25hr.push(data["pm25"]);
-                                        pm100hr.push(data["pm100"]);
-
-                                        if (timeLabelshr > 24) {
-                                                timeLabelshr.shift();
-                                                pm25hr.shift();
-                                                pm100hr.shift();
-                                        }
-
-                                        dataCharthr.data.labels = timeLabelshr;
-                                        dataCharthr.data.datasets[0].data = pm25hr;
-                                        dataCharthr.data.datasets[1].data = pm100hr;
-                                        dataCharthr.update();
-                                }
-
-                                document.getElementById('data25').innerText = `PM 2.5: ${data["pm25"]}`;
-                                document.getElementById('data100').innerText = `PM 10.0: ${data["pm100"]}`;
-                        } else {
-                                document.getElementById('data25').innerText = 'NAN';
-                                document.getElementById('data100').innerText = 'NAN';
-                        }
-                })
-                .catch(error => {
-                    document.getElementById('data25').innerText = 'NAN';
-                    document.getElementById('data100').innerText = 'NAN';
-                });
-        }
+        let pm25_hr = [];
+        let pm100_hr = [];
         window.onload = function() {
                 fetch('/history')
                         .then(response => response.json())
@@ -85,18 +25,33 @@
                                                 pm25.push(entry.pm25);
                                                 pm100.push(entry.pm100);
 
-                                                if (index % 60 == 0) {
-                                                        pm25hr.push(entry.pm25)
-                                                        pm100hr.push(entry.pm25)
-                                                        timeLabelshr.push(entrytimeserver.toLocaleString());
-                                                }
                                         });
 
+                                        dataChart.data.labels = timeLabels;
+                                        dataChart.data.datasets[0].data = pm25;
+                                        dataChart.data.datasets[1].data = pm100;
                                         dataChart.update();
-                                        dataCharthr.update();
                                 }
-                        })
-                        .catch(error => console.error("Could not load database:", error));
+                        }).catch(error => console.error("Could not load database:", error));
+
+                fetch('/history_hr')
+                        .then(response_hr => response_hr.json())
+                        .then (database_hr => {
+                                if (database_hr.length > 0) {
+                                        database_hr.forEach((entry, index) => {
+                                                let entrytimeserver = new Date(entry["time"]);
+                                                timeLabels_hr.push(entrytimeserver.toLocaleString());
+                                                pm25_hr.push(entry.pm25_hr);
+                                                pm100_hr.push(entry.pm100_hr)
+                                        });
+
+                                        dataChart_hr.data.labels = timeLabels_hr;
+                                        dataChart_hr.data.datasets[0].data = pm25_hr;
+                                        dataChart_hr.data.datasets[1].data = pm100_hr;
+                                        dataChart_hr.update();
+                                }
+                        }).catch(error => console.error("Could not load database:", error));
+
                 const ctx = document.getElementById('Chart').getContext('2d')
                 dataChart = new Chart(ctx, {
                         type: 'line',
@@ -104,19 +59,50 @@
                                 labels: [],
                                 datasets: [
                                         {
-                                                label: 'PM 2.5 (US AQI)',
-                                                borderColor: 'red',
-                                                borderWidth: 2,
+                                                label: 'PM 2.5',
                                                 fill: false,
-                                                data: []
+                                                data: [],
+                                                borderColor: 'grey',
+                                                backgroundColor: 'grey',
+                                                segment: {
+                                                        borderColor: ctx => {
+                                                                const y = ctx.p1.parsed.y;
+
+                                                                if (y > 301) return 'maroon';
+                                                                if (y > 201) return 'purple';
+                                                                if (y > 151) return 'red';
+                                                                if (y > 101) return 'orange';
+                                                                if (y > 51) return 'yellow';
+                                                                return 'green';
+                                                        }
+                                                },
+                                                pointBackgroundColor: 'grey',
+                                                pointBorderColor: 'grey',
+                                                tension: 0.5
                                         },
-                                        { 
-                                                label: 'PM 10.0 (US AQI)',
-                                                borderColor: 'blue',
-                                                borderWidth: 2,
+                                        {
+                                                label: 'PM 10.0',
                                                 fill: false,
-                                                data: []
+                                                data: [],
+                                                borderColor: 'black',
+                                                backgroundColor: 'black',
+                                                segment: {
+                                                        borderColor: ctx => {
+                                                        const y = ctx.p1.parsed.y;
+
+                                                        if (y > 301) return 'maroon';     
+                                                        if (y > 201) return 'purple';     
+                                                        if (y > 151) return 'red';
+                                                        if (y > 101) return 'orange';
+                                                        if (y > 51) return 'yellow';
+                                                        return 'green';
+                                                        }
+                                                },
+                                                pointBackgroundColor: 'black',
+                                                pointBorderColor: 'black',
+                                                tension: 0.5
                                         }
+
                                 ]
                         },
                         options: {
@@ -128,28 +114,61 @@
                         }
                 });
 
-                const ctx2 = document.getElementById('Charthr').getContext('2d')
-                dataCharthr = new Chart(ctx2, {
+                const ctx2 = document.getElementById('Chart_hr').getContext('2d')
+                dataChart_hr = new Chart(ctx2, {
                         type: 'line',
                         data: {
                                 labels: [],
                                 datasets: [
                                         {
-                                                label: 'PM 2.5 (US AQI)',
-                                                borderColor: 'red',
-                                                borderWidth: 2,
+                                                label: 'PM 2.5',
                                                 fill: false,
-                                                data: []
+                                                data: [],
+                                                borderColor: 'grey',
+                                                backgroundColor: 'grey',
+                                                segment: {
+                                                        borderColor: ctx => {
+                                                                const y = ctx.p1.parsed.y;
+
+                                                                if (y > 301) return 'maroon';
+                                                                if (y > 201) return 'purple';
+                                                                if (y > 151) return 'red';
+                                                                if (y > 101) return 'orange';
+                                                                if (y > 51) return 'yellow';
+                                                                return 'green';
+                                                        }
+                                                },
+                                                pointBackgroundColor: 'grey',
+                                                pointBorderColor: 'grey',
+                                                tension: 0.5
                                         },
-                                        { 
-                                                label: 'PM 10.0 (US AQI)',
-                                                borderColor: 'blue',
-                                                borderWidth: 2,
+                                        {
+                                                label: 'PM 10.0',
                                                 fill: false,
-                                                data: []
+                                                data: [],
+                                                borderColor: 'black',
+                                                backgroundColor: 'black',
+                                                segment: {
+                                                        borderColor: ctx => {
+                                                        const y = ctx.p1.parsed.y;
+                                                        
+                                                        if (y > 301) return 'maroon';     
+                                                        if (y > 201) return 'purple';     
+                                                        if (y > 151) return 'red';
+                                                        if (y > 101) return 'orange';
+                                                        if (y > 51) return 'yellow';
+                                                        return 'green';
+                                                        }
+                                                },
+                                                pointBackgroundColor: 'black',
+                                                pointBorderColor: 'black',
+                                                tension: 0.5
                                         }
+
                                 ]
                         },
+
+
                         options: {
                                 responsive : true,
                                 scales: {
@@ -158,17 +177,17 @@
                                 }
                         }
                });
-                fetchSensorData();
-                setInterval(fetchSensorData, 60000);
-
         };
     </script>
+    <style>
+
+
+    </style>
 </head>
 <body>
-    <h1>Air Sensor</h1>
-    <p id="data25">Loading...</p>
-    <p id="data100">Loading...</p>
+    <h1>Air Quality Data</h1>
+    <a href=https://www.airnow.gov/aqi/aqi-basics/>Info on safe levels can be found here</a>
     <canvas id="Chart" width="1920" height="1080"></canvas>
-    <canvas id="Charthr" width="1920" height="1080"></canvas>
+    <canvas id="Chart_hr" width="1920" height="1080"></canvas>
 </body>
 </html>

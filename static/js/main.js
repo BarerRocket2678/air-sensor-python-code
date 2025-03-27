@@ -1,12 +1,77 @@
+let dataChart;
+let dataChart_hr;
+let timeLabels = [];
+let timeLabels_hr = [];
+let pm25 = [];
+let pm100 = [];
+let pm25_hr = [];
+let pm100_hr = [];
+let Colorblind = false;
+
+function colorblind() {
+        if (Colorblind == false) {
+                Colorblind = true;
+        }
+        else {
+                Colorblind = false;
+        }
+
+        dataChart.data.datasets.forEach((dataset) => {
+                dataset.segment.borderColor = (ctx) => {
+                        const y = ctx.p1.parsed.y;
+
+                        if(Colorblind == true) {
+                                if (y >= 301) return 'rgb(100, 0, 21)';
+                                if (y >= 201) return 'rgb(137, 9, 151)';
+                                if (y >= 151) return 'rgb(240, 34, 0)';
+                                if (y >= 101) return 'rgb(255, 130, 5)';
+                                if (y >= 51) return 'rgb(225, 201, 5)';
+                                return 'rgb(158, 255, 145)';
+                        }
+                        else {
+                                if (y >= 301) return 'rgb(126, 0, 35)';
+                                if (y >= 201) return 'rgb(143, 63, 151';
+                                if (y >= 151) return 'rgb(255, 0, 0)';
+                                if (y >= 101) return 'rgb(255, 126, 0)';
+                                if (y >= 51) return 'rgb(225, 255, 0)';
+                                return 'rgb(0, 228, 0)';
+                        }
+
+                };
+        });
+
+        dataChart.update();
+
+        dataChart_hr.data.datasets.forEach((dataset) => {
+                dataset.segment.borderColor = (ctx) => {
+                        const y = ctx.p1.parsed.y;
+                        
+                        if(Colorblind == true) {
+                                if (y >= 301) return 'rgb(100, 0, 21)';
+                                if (y >= 201) return 'rgb(137, 9, 151)';
+                                if (y >= 151) return 'rgb(240, 34, 0)';
+                                if (y >= 101) return 'rgb(255, 130, 5)';
+                                if (y >= 51) return 'rgb(225, 201, 5)';
+                                return 'rgb(158, 255, 145)';
+                        }
+                        else {
+                                if (y >= 301) return 'rgb(126, 0, 35)';
+                                if (y >= 201) return 'rgb(143, 63, 151';
+                                if (y >= 151) return 'rgb(255, 0, 0)';
+                                if (y >= 101) return 'rgb(255, 126, 0)';
+                                if (y >= 51) return 'rgb(225, 255, 0)';
+                                return 'rgb(0, 228, 0)';
+                        }
+                        
+                };
+        });
+
+        dataChart_hr.update();
+
+}
+
+
 window.onload = function() {
-        let dataChart;
-        let dataChart_hr;
-        let timeLabels = [];
-        let timeLabels_hr = [];
-        let pm25 = [];
-        let pm100 = [];
-        let pm25_hr = [];
-        let pm100_hr = [];
         fetch('/history')
                 .then(response => response.json())
                 .then (database => {
@@ -124,14 +189,14 @@ window.onload = function() {
                                         segment: {
                                                 borderColor: ctx => {
                                                         const y = ctx.p1.parsed.y;
-
-                                                        if (y > 301) return 'maroon';
-                                                        if (y > 201) return 'purple';
-                                                        if (y > 151) return 'red';
-                                                        if (y > 101) return 'orange';
-                                                        if (y > 51) return 'yellow';
-                                                        return 'green';
+                                                        if (y >= 301) return 'rgb(126, 0, 35)';
+                                                        if (y >= 201) return 'rgb(143, 63, 151';
+                                                        if (y >= 151) return 'rgb(255, 0, 0)';
+                                                        if (y >= 101) return 'rgb(255, 126, 0)';
+                                                        if (y >= 51) return 'rgb(225, 255, 0)';
+                                                        return 'rgb(0, 228, 0)';
                                                 }
+
                                         },
                                         pointBackgroundColor: 'white',
                                         pointBorderColor: 'white',
@@ -147,12 +212,12 @@ window.onload = function() {
                                                 borderColor: ctx => {
                                                 const y = ctx.p1.parsed.y;
 
-                                                if (y > 301) return 'maroon';     
-                                                if (y > 201) return 'purple';     
-                                                if (y > 151) return 'red';
-                                                if (y > 101) return 'orange';
-                                                if (y > 51) return 'yellow';
-                                                return 'green';
+                                                if (y >= 301) return 'rgb(126, 0, 35)';
+                                                if (y >= 201) return 'rgb(143, 63, 151';
+                                                if (y >= 151) return 'rgb(255, 0, 0)';
+                                                if (y >= 101) return 'rgb(255, 126, 0)';
+                                                if (y >= 51) return 'rgb(225, 255, 0)';
+                                                return 'rgb(0, 228, 0)';
                                                 }
                                         },
                                         pointBackgroundColor: 'black',
@@ -198,12 +263,13 @@ window.onload = function() {
                                                 borderColor: ctx => {
                                                         const y = ctx.p1.parsed.y;
 
-                                                        if (y > 301) return 'maroon';
-                                                        if (y > 201) return 'purple';
-                                                        if (y > 151) return 'red';
-                                                        if (y > 101) return 'orange';
-                                                        if (y > 51) return 'yellow';
-                                                        return 'green';
+                                                        if (y >= 301) return 'rgb(126, 0, 35)';
+                                                        if (y >= 201) return 'rgb(143, 63, 151';
+                                                        if (y >= 151) return 'rgb(255, 0, 0)';
+                                                        if (y >= 101) return 'rgb(255, 126, 0)';
+                                                        if (y >= 51) return 'rgb(225, 255, 0)';
+                                                        return 'rgb(0, 228, 0)';
+
                                                 }
                                         },
                                         pointBackgroundColor: 'white',
@@ -220,12 +286,13 @@ window.onload = function() {
                                                 borderColor: ctx => {
                                                 const y = ctx.p1.parsed.y;
 
-                                                if (y > 301) return 'maroon';     
-                                                if (y > 201) return 'purple';     
-                                                if (y > 151) return 'red';
-                                                if (y > 101) return 'orange';
-                                                if (y > 51) return 'yellow';
-                                                return 'green';
+                                                if (y >= 301) return 'rgb(126, 0, 35)';
+                                                if (y >= 201) return 'rgb(143, 63, 151';
+                                                if (y >= 151) return 'rgb(255, 0, 0)';
+                                                if (y >= 101) return 'rgb(255, 126, 0)';
+                                                if (y >= 51) return 'rgb(225, 255, 0)';
+                                                return 'rgb(0, 228, 0)';
+
                                                 }
                                         },
                                         pointBackgroundColor: 'black',

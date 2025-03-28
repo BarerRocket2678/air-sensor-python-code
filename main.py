@@ -90,11 +90,8 @@ def aqi_pm100(pm):
     elif (pm >= 355 and pm <= 424):
         return (round((201.0 - 300.0)/(424.0 - 355.0) * (pm - 355.0) + 300.0))
 
-    elif (pm >= 425 and pm <= 604):
-        return (round((500.0 - 301.0)/(604.0 - 425.0) * (pm - 425.0) + 301.0))
-
     else:
-        return (500.0)
+        return (round((500.0 - 301.0)/(604.0 - 425.0) * (pm - 425.0) + 301.0))
 
 
 def aqi_pm25(pm):
@@ -115,11 +112,10 @@ def aqi_pm25(pm):
     elif (pm >= 125.5 and pm <= 225.4):
         return (round((300.0 - 201.0)/(225.4 - 125.5) * (pm - 125.5) + 201.0))
 
-    elif (pm >= 225.5 and pm <= 325.4):
+    else:
         return (round((500.0 - 301.0)/(325.4 - 225.5) * (pm - 225.5) + 301.0))
 
-    else:
-        return (500.0)
+data_lock = threading.Lock()
 
 def get_data():
     while True:
@@ -127,7 +123,7 @@ def get_data():
         aqi100_hr = []
 
 
-        for x in range(60):
+        for y in range(60):
             aqi25_tmp = []
             aqi100_tmp = []
 
@@ -137,28 +133,43 @@ def get_data():
                     aqdata = pm25.read()
                     aqi25_tmp.append(aqdata["pm25 env"])
                     aqi100_tmp.append(aqdata["pm100 env"])
-
-                except:
+                except Exception as e:
+                    print(e)
                     continue
             try:
-                log.append({"time": datetime.datetime.now().astimezone(
-                ).isoformat(), "pm25": aqi_pm25(statistics.mean(aqi25_tmp)), "pm100": aqi_pm100(statistics.mean(aqi100_tmp))})
-                aqi25_hr.append(statistics.mean(aqi25_tmp))
-                aqi100_hr.append(statistics.mean(aqi100_tmp))
+                    
+                    while True:
+                        if datetime.datetime.now().second == 0:
+                            break
+                        time.sleep(0.01)
 
-                with open('data_tmp.json', 'w') as file_tmp:
-                    json.dump(log[-120:], file_tmp)
-                    file_tmp.flush()
-                    os.fsync(file_tmp.fileno())
+                    log.append({                                                          
+                    "time": datetime.datetime.now().astimezone().isoformat(),    
+                    "pm25": aqi_pm25(statistics.median(aqi25_tmp)),                                                      
+                    "pm100": aqi_pm100(statistics.median(aqi100_tmp))  
+                    })
+                    
+                    aqi25_hr.append(statistics.median(aqi25_tmp))
+                    aqi100_hr.append(statistics.median(aqi100_tmp))
 
-                os.replace('data_tmp.json', 'data.json')
+
+                    with open('data_tmp.json', 'w') as file_tmp:
+                        json.dump(log[-120:], file_tmp)
+                        file_tmp.flush()
+                        os.fsync(file_tmp.fileno())
+
+                    os.replace('data_tmp.json', 'data.json')
 
             except Exception as e:
                 print(e)
                 continue
         
         try:
-            loghr.append({"time": datetime.datetime.now().astimezone().isoformat(), "pm25_hr": aqi_pm25(statistics.mean(aqi25_hr)), "pm100_hr": aqi_pm100(statistics.mean(aqi100_hr))})
+            loghr.append({
+            "time": datetime.datetime.now().astimezone().isoformat(), 
+            "pm25_hr": aqi_pm25(statistics.mean(aqi25_hr)), 
+            "pm100_hr": aqi_pm100(statistics.mean(aqi100_hr))
+            })
 
             with open('data_hr_tmp.json', 'w') as file_hr_tmp:
                 json.dump(loghr[-48:], file_hr_tmp)
@@ -199,11 +210,18 @@ def history_hr():
     except FileNotFoundError:
         return jsonify([])
 
-if __name__ == '__main__':
-    sensor_thread = threading.Thread(target=get_data)
-    sensor_thread.daemon = True
-    sensor_thread.start()
-    app.run(host='0.0.0.0', port=5000, debug=True)
+
+if (data_lock.acquire(blocking=False)):
+    try:
+        sensor_thread = threading.Thread(target=get_data)
+        sensor_thread.daemon = True
+        sensor_thread.start()
+    finally:
+        data_lock.release()
+else:
+        print("Thread already running!")
+
+app.run(host='0.0.0.0', port=5000, debug=False)
 """
 while True:
     time.sleep(1)

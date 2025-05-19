@@ -66,6 +66,11 @@ if os.path.exists('data_hr.json'):
 else:
     loghr = []
 
+if os.path.exists('data_dy.json'):
+    with open('data_dy.json', 'r') as filedy:
+        logdy = json.load(filedy)
+else:
+    logdy = []
 
 
 time.sleep(3)
@@ -119,68 +124,95 @@ data_lock = threading.Lock()
 
 def get_data():
     while True:
-        aqi25_hr = []
-        aqi100_hr = []
+        aqi25_dy = []
+        aqi100_dy = []
+            
 
 
-        for y in range(60):
-            aqi25_tmp = []
-            aqi100_tmp = []
+        for z in range(24):
+            aqi25_hr = []
+            aqi100_hr = []
 
-            for x in range(6):
+
+            for y in range(60):
+                aqi25_tmp = []
+                aqi100_tmp = []
+
+                for x in range(6):
+                    try:
+                        time.sleep(5)
+                        while True:
+                            if int(time.gmtime().tm_sec) in [0, 10, 20, 30, 40, 50]:
+                                break
+                            time.sleep(0.01)
+
+                        aqdata = pm25.read()
+                        aqi25_tmp.append(aqdata["pm25 env"])
+                        aqi100_tmp.append(aqdata["pm100 env"])
+                    except Exception as e:
+                        print("Error reading sensor: ", e)
+                        time.sleep(5)
+                        continue
                 try:
-                    time.sleep(10)
-                    aqdata = pm25.read()
-                    aqi25_tmp.append(aqdata["pm25 env"])
-                    aqi100_tmp.append(aqdata["pm100 env"])
+
+                        log.append({                                                          
+                        "time": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),    
+                        "pm25": aqi_pm25(statistics.median(aqi25_tmp)),                                                      
+                        "pm100": aqi_pm100(statistics.median(aqi100_tmp))  
+                        })
+                        
+                        aqi25_hr.append(statistics.median(aqi25_tmp))
+                        aqi100_hr.append(statistics.median(aqi100_tmp))
+                        aqi25_dy.append(statistics.median(aqi25_tmp))
+                        aqi100_dy.append(statistics.median(aqi100_tmp))
+
+                        with open('data_tmp.json', 'w') as file_tmp:
+                            json.dump(log[-120:], file_tmp)
+                            file_tmp.flush()
+                            os.fsync(file_tmp.fileno())
+
+                        os.replace('data_tmp.json', 'data.json')
+
                 except Exception as e:
                     print(e)
                     continue
+            
             try:
-                    
-                    while True:
-                        if datetime.datetime.now().second == 0:
-                            break
-                        time.sleep(0.01)
+                loghr.append({
+                "time": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), 
+                "pm25_hr": aqi_pm25(statistics.mean(aqi25_hr)), 
+                "pm100_hr": aqi_pm100(statistics.mean(aqi100_hr))
+                })
 
-                    log.append({                                                          
-                    "time": datetime.datetime.now().astimezone().isoformat(),    
-                    "pm25": aqi_pm25(statistics.median(aqi25_tmp)),                                                      
-                    "pm100": aqi_pm100(statistics.median(aqi100_tmp))  
-                    })
-                    
-                    aqi25_hr.append(statistics.median(aqi25_tmp))
-                    aqi100_hr.append(statistics.median(aqi100_tmp))
-
-
-                    with open('data_tmp.json', 'w') as file_tmp:
-                        json.dump(log[-120:], file_tmp)
-                        file_tmp.flush()
-                        os.fsync(file_tmp.fileno())
-
-                    os.replace('data_tmp.json', 'data.json')
+                with open('data_hr_tmp.json', 'w') as file_hr_tmp:
+                    json.dump(loghr[-48:], file_hr_tmp)
+                    file_hr_tmp.flush()
+                    os.fsync(file_hr_tmp.fileno())
+                
+                os.replace('data_hr_tmp.json', 'data_hr.json')
 
             except Exception as e:
                 print(e)
                 continue
-        
+
         try:
             loghr.append({
-            "time": datetime.datetime.now().astimezone().isoformat(), 
-            "pm25_hr": aqi_pm25(statistics.mean(aqi25_hr)), 
-            "pm100_hr": aqi_pm100(statistics.mean(aqi100_hr))
+            "time": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), 
+            "pm25_dy": aqi_pm25(statistics.mean(aqi25_dy)), 
+            "pm100_dy": aqi_pm100(statistics.mean(aqi100_dy))
             })
 
-            with open('data_hr_tmp.json', 'w') as file_hr_tmp:
-                json.dump(loghr[-48:], file_hr_tmp)
-                file_hr_tmp.flush()
-                os.fsync(file_hr_tmp.fileno())
-            
-            os.replace('data_hr_tmp.json', 'data_hr.json')
+            with open('data_dy_tmp.json', 'w') as file_dy_tmp:
+                json.dump(logdy[-56:], file_dy_tmp)
+                file_dy_tmp.flush()
+                os.fsync(file_dy_tmp.fileno())
+                
+            os.replace('data_dy_tmp.json', 'data_dy.json')
 
         except Exception as e:
             print(e)
             continue
+
             
 
 
@@ -209,6 +241,16 @@ def history_hr():
         return jsonify(database_hr[-24:])
     except FileNotFoundError:
         return jsonify([])
+
+@app.route('/history_dy', methods=['GET'])
+def history_dy():
+    try:
+        with open('data_dy.json', 'r') as file_dy:
+            database_dy = json.load(file_dy)
+        return jsonify(database_dy[-28:])
+    except FileNotFoundError:
+        return jsonify([])
+
 
 
 if (data_lock.acquire(blocking=False)):

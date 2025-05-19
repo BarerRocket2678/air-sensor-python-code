@@ -3,12 +3,21 @@
 <head>
         <meta charset="UTF-8">
         <title>Notes and considerations</title>
+        <style>
+                body {
+                        background-color: #121212;
+                        color: #ffffff;
+                }
+
+        </style>
 </head>
 <body>
         <a href="{{url_for('home')}}">Back</a>
         <ul>
-                <li>The AQI scale has a minimum value of 0 and a maximum value of 500.</li>
+                <li>The AQI scale has a minimum value of 0 and a maximum value of 500. However, values past 500 can still be shown.</li>
                 <li>If the sensor is exposed to high levels of dust or large particles, the AQI levels may not return to normal for a while after the source has been removed.</li>
+                <li>Due to this sensor's inability to read whole values, the output for minute AQI may look like it is swapping between 2 AQI values. This is normal.</li>
+                <li>The official PM2.5 and PM10 AQI values should be recorded according to the 24 hour average graph in accordance to the EPA AQI Technical Sheet.</li> 
         </ul>
 </body>
 </html>

@@ -156,15 +156,15 @@ def get_data():
 
                 log.append({
                 "time": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-                "pm25": aqi_pm25(statistics.median(aqi25_mn)),
-                "pm100": aqi_pm100(statistics.median(aqi100_mn))
+                "pm25": aqi_pm25(statistics.mode(aqi25_mn)),
+                "pm100": aqi_pm100(statistics.mode(aqi100_mn))
                 })
 
-                aqi25_hr.append(aqi_pm25(statistics.median(aqi25_mn)))
-                aqi100_hr.append(aqi_pm100(statistics.median(aqi100_mn)))
+                aqi25_hr.append(aqi_pm25(statistics.mode(aqi25_mn)))
+                aqi100_hr.append(aqi_pm100(statistics.mode(aqi100_mn)))
 
-                aqi25_dy.append(aqi_pm25(statistics.median(aqi25_mn)))
-                aqi100_dy.append(aqi_pm100(statistics.median(aqi100_mn)))
+                aqi25_dy.append(aqi_pm25(statistics.mode(aqi25_mn)))
+                aqi100_dy.append(aqi_pm100(statistics.mode(aqi100_mn)))
 
                 aqi25_mn.clear()
                 aqi100_mn.clear()

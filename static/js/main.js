@@ -37,7 +37,7 @@ function colorblind() {
                         }
                         else {
                                 if (y >= 301) return 'rgb(126, 0, 35)';
-                                if (y >= 201) return 'rgb(143, 63, 151';
+                                if (y >= 201) return 'rgb(143, 63, 151)';
                                 if (y >= 151) return 'rgb(255, 0, 0)';
                                 if (y >= 101) return 'rgb(255, 126, 0)';
                                 if (y >= 51) return 'rgb(225, 255, 0)';
@@ -63,7 +63,7 @@ function colorblind() {
                         }
                         else {
                                 if (y >= 301) return 'rgb(126, 0, 35)';
-                                if (y >= 201) return 'rgb(143, 63, 151';
+                                if (y >= 201) return 'rgb(143, 63, 151)';
                                 if (y >= 151) return 'rgb(255, 0, 0)';
                                 if (y >= 101) return 'rgb(255, 126, 0)';
                                 if (y >= 51) return 'rgb(225, 255, 0)';
@@ -89,7 +89,7 @@ function colorblind() {
                         }
                         else {
                                 if (y >= 301) return 'rgb(126, 0, 35)';
-                                if (y >= 201) return 'rgb(143, 63, 151';
+                                if (y >= 201) return 'rgb(143, 63, 151)';
                                 if (y >= 151) return 'rgb(255, 0, 0)';
                                 if (y >= 101) return 'rgb(255, 126, 0)';
                                 if (y >= 51) return 'rgb(225, 255, 0)';
@@ -104,125 +104,6 @@ function colorblind() {
 
 
 window.onload = function() {
-        fetch('/history')
-                .then(response => response.json())
-                .then (database => {
-                        if (database.length > 0) {
-                                database.forEach((entry, index) => {
-                                        let entrytimeserver = new Date(entry["time"]);
-                                        timeLabels.push(entrytimeserver.toLocaleString());
-                                        pm25.push(entry.pm25);
-                                        pm100.push(entry.pm100);
-
-                                });
-
-                                dataChart.data.labels = timeLabels;
-                                dataChart.data.datasets[0].data = pm25;
-                                dataChart.data.datasets[1].data = pm100;
-                                dataChart.update();
-                        }
-                }).catch(error => console.error("Could not load database:", error));
-
-        fetch('/history_hr')
-                .then(response_hr => response_hr.json())
-                .then (database_hr => {
-                        if (database_hr.length > 0) {
-                                database_hr.forEach((entry, index) => {
-                                        let entrytimeserver = new Date(entry["time"]);
-                                        timeLabels_hr.push(entrytimeserver.toLocaleString());
-                                        pm25_hr.push(entry.pm25_hr);
-                                        pm100_hr.push(entry.pm100_hr)
-                                });
-
-                                dataChart_hr.data.labels = timeLabels_hr;
-                                dataChart_hr.data.datasets[0].data = pm25_hr;
-                                dataChart_hr.data.datasets[1].data = pm100_hr;
-                                dataChart_hr.update();
-                        }
-                }).catch(error => console.error("Could not load database:", error));
-
-        fetch('/history_dy')
-                .then(response_dy => response_dy.json())
-                .then (database_dy => {
-                        if (database_dy.length > 0) {
-                                database_dy.forEach((entry, index) => {
-                                        let entrytimeserver = new Date(entry["time"]);
-                                        timeLabels_dy.push(entrytimeserver.toLocaleString());
-                                        pm25_dy.push(entry.pm25_dy);
-                                        pm100_dy.push(entry.pm100_dy)
-                                });
-
-                                dataChart_dy.data.labels = timeLabels_dy;
-                                dataChart_dy.data.datasets[0].data = pm25_dy;
-                                dataChart_dy.data.datasets[1].data = pm100_dy;
-                                dataChart_dy.update();
-
-                                let status = "Good";
-                                let effects = ["Effects: None.", "Effects: Consider reducing exertion for sensitive people.", "Effects: Reduce exertion for sensitive people, people with asthma, and people with heart disease.", "Effects: Avoid exertion for sensitive people, people with asthma, and people with heart disease. The general public should reduce exertion.", "Effects: Avoid all activity for sensitive people, people with asthma, and people with heart disease. The general public should avoid exertion.", "Effects: Avoid contact with contaminated air for sensitive people, people with asthma, and people with heart disease. The general public should avoid all activity"]; 
-                                if (pm25[pm25.length - 1] > pm100[pm100.length - 1]) {
-                                        if(pm25[pm25.length - 1] == 500) {            
-                                                document.getElementById("Status").innerHTML = "Status: Hazardous (DANGER: Levels have hit the max of the AQI system!";
-                                                document.getElementById("Effects").innerHTML = effects[5];
-                                        }
-                                        else if(pm25[pm25.length - 1] > 300) {
-                                                document.getElementById("Status").innerHTML = "Status: Hazardous";
-                                                document.getElementById("Effects").innerHTML = effects[5];
-                                        }
-                                        else if(pm25[pm25.length - 1] > 200) {
-                                                document.getElementById("Status").innerHTML = "Status: Very Unhealthy";
-                                                document.getElementById("Effects").innerHTML = effects[4];
-                                        }
-                                        else if(pm25[pm25.length - 1] > 150) {
-                                                document.getElementById("Status").innerHTML = "Status: Unhealthy";
-                                                document.getElementById("Effects").innerHTML = effects[3];
-                                        }
-                                        else if(pm25[pm25.length - 1] > 100) {
-                                                document.getElementById("Status").innerHTML = "Status: Unhealthy for sensitive groups";
-                                                document.getElementById("Effects").innerHTML = effects[2];
-                                        }
-                                        else if(pm25[pm25.length - 1] > 50) {
-                                                document.getElementById("Status").innerHTML = "Status: Moderate";
-                                                document.getElementById("Effects").innerHTML = effects[1];
-                                        }
-                                        else if(pm25[pm25.length - 1] >= 0) {
-                                                document.getElementById("Status").innerHTML = "Status: Good";
-                                                document.getElementById("Effects").innerHTML = effects[0];
-                                        }
-                                else {
-                                        if(pm100[pm100.length - 1] == 500) {            
-                                                document.getElementById("Status").innerHTML = "Status: Hazardous (DANGER: Levels have hit the max of the AQI system!";
-                                                document.getElementById("Effects").innerHTML = effects[5];
-                                        }
-                                        else if(pm100[pm100.length - 1] > 300) {
-                                                document.getElementById("Status").innerHTML = "Status: Hazardous";
-                                                document.getElementById("Effects").innerHTML = effects[5];
-                                        }
-                                        else if(pm100[pm100.length - 1] > 200) {
-                                                document.getElementById("Status").innerHTML = "Status: Very Unhealthy";
-                                                document.getElementById("Effects").innerHTML = effects[4];
-                                        }
-                                        else if(pm100[pm100.length - 1] > 150) {
-                                                document.getElementById("Status").innerHTML = "Status: Unhealthy";
-                                                document.getElementById("Effects").innerHTML = effects[3];
-                                        }
-                                        else if(pm100[pm100.length - 1] > 100) {
-                                                document.getElementById("Status").innerHTML = "Status: Unhealthy for sensitive groups";
-                                                document.getElementById("Effects").innerHTML = effects[2];
-                                        }
-                                        else if(pm100[pm100.length - 1] > 50) {
-                                                document.getElementById("Status").innerHTML = "Status: Moderate";
-                                                document.getElementById("Effects").innerHTML = effects[1];
-                                        }
-                                        else if(pm100[pm100.length - 1] >= 0) {
-                                                document.getElementById("Status").innerHTML = "Status: Good";
-                                                document.getElementById("Effects").innerHTML = effects[0];
-                                        }
-                                }
-                        }
-                }
-        }).catch(error => console.error("Could not load database:", error));
-
-
         const ctx = document.getElementById('Chart').getContext('2d')
         dataChart = new Chart(ctx, {
                 type: 'line',
@@ -239,7 +120,7 @@ window.onload = function() {
                                                 borderColor: ctx => {
                                                         const y = ctx.p1.parsed.y;
                                                         if (y >= 301) return 'rgb(126, 0, 35)';
-                                                        if (y >= 201) return 'rgb(143, 63, 151';
+                                                        if (y >= 201) return 'rgb(143, 63, 151)';
                                                         if (y >= 151) return 'rgb(255, 0, 0)';
                                                         if (y >= 101) return 'rgb(255, 126, 0)';
                                                         if (y >= 51) return 'rgb(225, 255, 0)';
@@ -261,7 +142,7 @@ window.onload = function() {
                                                 const y = ctx.p1.parsed.y;
 
                                                 if (y >= 301) return 'rgb(126, 0, 35)';
-                                                if (y >= 201) return 'rgb(143, 63, 151';
+                                                if (y >= 201) return 'rgb(143, 63, 151)';
                                                 if (y >= 151) return 'rgb(255, 0, 0)';
                                                 if (y >= 101) return 'rgb(255, 126, 0)';
                                                 if (y >= 51) return 'rgb(225, 255, 0)';
@@ -311,7 +192,7 @@ window.onload = function() {
                                                         const y = ctx.p1.parsed.y;
 
                                                         if (y >= 301) return 'rgb(126, 0, 35)';
-                                                        if (y >= 201) return 'rgb(143, 63, 151';
+                                                        if (y >= 201) return 'rgb(143, 63, 151)';
                                                         if (y >= 151) return 'rgb(255, 0, 0)';
                                                         if (y >= 101) return 'rgb(255, 126, 0)';
                                                         if (y >= 51) return 'rgb(225, 255, 0)';
@@ -334,7 +215,7 @@ window.onload = function() {
                                                 const y = ctx.p1.parsed.y;
 
                                                 if (y >= 301) return 'rgb(126, 0, 35)';
-                                                if (y >= 201) return 'rgb(143, 63, 151';
+                                                if (y >= 201) return 'rgb(143, 63, 151)';
                                                 if (y >= 151) return 'rgb(255, 0, 0)';
                                                 if (y >= 101) return 'rgb(255, 126, 0)';
                                                 if (y >= 51) return 'rgb(225, 255, 0)';
@@ -370,7 +251,7 @@ window.onload = function() {
 
        });
 
-        const ctx3 = document.getElementById('Chart_dy').getContext('2d')
+        const ctx3 = document.getElementById('Chart_dy').getContext('2d');
         dataChart_dy = new Chart(ctx3, {
                 type: 'line',
                 data: {
@@ -387,7 +268,7 @@ window.onload = function() {
                                                         const y = ctx.p1.parsed.y;
 
                                                         if (y >= 301) return 'rgb(126, 0, 35)';
-                                                        if (y >= 201) return 'rgb(143, 63, 151';
+                                                        if (y >= 201) return 'rgb(143, 63, 151)';
                                                         if (y >= 151) return 'rgb(255, 0, 0)';
                                                         if (y >= 101) return 'rgb(255, 126, 0)';
                                                         if (y >= 51) return 'rgb(225, 255, 0)';
@@ -410,7 +291,7 @@ window.onload = function() {
                                                 const y = ctx.p1.parsed.y;
                                                 
                                                 if (y >= 301) return 'rgb(126, 0, 35)';
-                                                if (y >= 201) return 'rgb(143, 63, 151';
+                                                if (y >= 201) return 'rgb(143, 63, 151)';
                                                 if (y >= 151) return 'rgb(255, 0, 0)';
                                                 if (y >= 101) return 'rgb(255, 126, 0)';
                                                 if (y >= 51) return 'rgb(225, 255, 0)';
@@ -443,6 +324,125 @@ window.onload = function() {
                                 }
                         }
                 }
+        });
 
-       });
+        fetch('/history')
+                .then(response => response.json())
+                .then (database => {
+                        if (database.length > 0) {
+                                database.forEach((entry, index) => {
+                                        let entrytimeserver = new Date(entry["time"]);
+                                        timeLabels.push(entrytimeserver.toLocaleString());
+                                        pm25.push(entry.pm25);
+                                        pm100.push(entry.pm100);
+
+                                });
+
+                                dataChart.data.labels = timeLabels;
+                                dataChart.data.datasets[0].data = pm25;
+                                dataChart.data.datasets[1].data = pm100;
+                                dataChart.update();
+                        }
+                }).catch(error => console.error("Could not load database:", error));
+
+        fetch('/history_hr')
+                .then(response_hr => response_hr.json())
+                .then (database_hr => {
+                        if (database_hr.length > 0) {
+                                database_hr.forEach((entry, index) => {
+                                        let entrytimeserver = new Date(entry["time"]);
+                                        timeLabels_hr.push(entrytimeserver.toLocaleString());
+                                        pm25_hr.push(entry.pm25_hr);
+                                        pm100_hr.push(entry.pm100_hr)
+                                });
+
+                                dataChart_hr.data.labels = timeLabels_hr;
+                                dataChart_hr.data.datasets[0].data = pm25_hr;
+                                dataChart_hr.data.datasets[1].data = pm100_hr;
+                                dataChart_hr.update();
+                        }
+                }).catch(error => console.error("Could not load database:", error));
+
+        fetch('/history_dy')
+                .then(response_dy => response_dy.json())
+                .then (database_dy => {
+                        console.log("Fetched daily history:", database_dy);
+                        if (database_dy.length > 0) {
+                                database_dy.forEach((entry, index) => {
+                                        let entrytimeserver = new Date(entry["time"]);
+                                        timeLabels_dy.push(entrytimeserver.toLocaleString());
+                                        pm25_dy.push(entry.pm25_dy);
+                                        pm100_dy.push(entry.pm100_dy)
+                                });
+
+                                dataChart_dy.data.labels = timeLabels_dy;
+                                dataChart_dy.data.datasets[0].data = pm25_dy;
+                                dataChart_dy.data.datasets[1].data = pm100_dy;
+                                dataChart_dy.update();
+
+                                let status = "Good";
+                                let effects = ["Effects: None.", "Effects: Consider reducing exertion for sensitive people.", "Effects: Reduce exertion for sensitive people, people with asthma, and people with heart disease.", "Effects: Avoid exertion for sensitive people, people with asthma, and people with heart disease. The general public should reduce exertion.", "Effects: Avoid all activity for sensitive people, people with asthma, and people with heart disease. The general public should avoid exertion.", "Effects: Avoid contact with contaminated air for sensitive people, people with asthma, and people with heart disease. The general public should avoid all activity"]; 
+                                if (pm25[pm25.length - 1] > pm100[pm100.length - 1]) {
+                                        if(pm25[pm25.length - 1] == 500) {            
+                                                document.getElementById("Status").innerHTML = "Status: Hazardous (DANGER: Levels have hit the max of the AQI system!)";
+                                                document.getElementById("Effects").innerHTML = effects[5];
+                                        }
+                                        else if(pm25[pm25.length - 1] > 300) {
+                                                document.getElementById("Status").innerHTML = "Status: Hazardous";
+                                                document.getElementById("Effects").innerHTML = effects[5];
+                                        }
+                                        else if(pm25[pm25.length - 1] > 200) {
+                                                document.getElementById("Status").innerHTML = "Status: Very Unhealthy";
+                                                document.getElementById("Effects").innerHTML = effects[4];
+                                        }
+                                        else if(pm25[pm25.length - 1] > 150) {
+                                                document.getElementById("Status").innerHTML = "Status: Unhealthy";
+                                                document.getElementById("Effects").innerHTML = effects[3];
+                                        }
+                                        else if(pm25[pm25.length - 1] > 100) {
+                                                document.getElementById("Status").innerHTML = "Status: Unhealthy for sensitive groups";
+                                                document.getElementById("Effects").innerHTML = effects[2];
+                                        }
+                                        else if(pm25[pm25.length - 1] > 50) {
+                                                document.getElementById("Status").innerHTML = "Status: Moderate";
+                                                document.getElementById("Effects").innerHTML = effects[1];
+                                        }
+                                        else if(pm25[pm25.length - 1] >= 0) {
+                                                document.getElementById("Status").innerHTML = "Status: Good";
+                                                document.getElementById("Effects").innerHTML = effects[0];
+                                        }
+                                } else {
+                                        if(pm100[pm100.length - 1] == 500) {            
+                                                document.getElementById("Status").innerHTML = "Status: Hazardous (DANGER: Levels have hit the max of the AQI system!)";
+                                                document.getElementById("Effects").innerHTML = effects[5];
+                                        }
+                                        else if(pm100[pm100.length - 1] > 300) {
+                                                document.getElementById("Status").innerHTML = "Status: Hazardous";
+                                                document.getElementById("Effects").innerHTML = effects[5];
+                                        }
+                                        else if(pm100[pm100.length - 1] > 200) {
+                                                document.getElementById("Status").innerHTML = "Status: Very Unhealthy";
+                                                document.getElementById("Effects").innerHTML = effects[4];
+                                        }
+                                        else if(pm100[pm100.length - 1] > 150) {
+                                                document.getElementById("Status").innerHTML = "Status: Unhealthy";
+                                                document.getElementById("Effects").innerHTML = effects[3];
+                                        }
+                                        else if(pm100[pm100.length - 1] > 100) {
+                                                document.getElementById("Status").innerHTML = "Status: Unhealthy for sensitive groups";
+                                                document.getElementById("Effects").innerHTML = effects[2];
+                                        }
+                                        else if(pm100[pm100.length - 1] > 50) {
+                                                document.getElementById("Status").innerHTML = "Status: Moderate";
+                                                document.getElementById("Effects").innerHTML = effects[1];
+                                        }
+                                        else if(pm100[pm100.length - 1] >= 0) {
+                                                document.getElementById("Status").innerHTML = "Status: Good";
+                                                document.getElementById("Effects").innerHTML = effects[0];
+                                        }
+                                }
+                        }
+
+                }).catch(error => console.error("Could not load database:", error));
+
 }

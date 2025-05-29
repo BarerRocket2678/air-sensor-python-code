@@ -148,7 +148,8 @@ def get_data():
                 except Exception as e:
                     print(e)
                     continue
-                                            
+                 
+                time.sleep(1)
         if now.second == 0 and len(aqi25_mn) != 0 and len(aqi100_mn) != 0:
             try:
                 if (len(log) > 120):
@@ -160,11 +161,11 @@ def get_data():
                 "pm100": aqi_pm100(statistics.mode(aqi100_mn))
                 })
 
-                aqi25_hr.append(aqi_pm25(statistics.mode(aqi25_mn)))
-                aqi100_hr.append(aqi_pm100(statistics.mode(aqi100_mn)))
+                aqi25_hr.append(statistics.mode(aqi25_mn))
+                aqi100_hr.append(statistics.mode(aqi100_mn))
 
-                aqi25_dy.append(aqi_pm25(statistics.mode(aqi25_mn)))
-                aqi100_dy.append(aqi_pm100(statistics.mode(aqi100_mn)))
+                aqi25_dy.append(statistics.mode(aqi25_mn))
+                aqi100_dy.append(statistics.mode(aqi100_mn))
 
                 aqi25_mn.clear()
                 aqi100_mn.clear()
@@ -180,7 +181,7 @@ def get_data():
                 print(e)
                 continue
 
-            time.sleep(2)
+            time.sleep(1)
 
 
 
@@ -191,15 +192,15 @@ def get_data():
 
                 logdy.append({
                 "time": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-                "pm25_dy": statistics.mean(aqi25_dy),
-                "pm100_dy": statistics.mean(aqi100_dy)
+                "pm25_dy": aqi_pm25(statistics.mean(aqi25_dy)),
+                "pm100_dy": aqi_pm100(statistics.mean(aqi100_dy))
                 })
 
                 aqi25_dy.clear()
                 aqi100_dy.clear()
 
                 with open('data_dy_tmp.json', 'w') as file_dy_tmp:
-                    json.dump(loghr[-48:], file_dy_tmp)
+                    json.dump(logdy[-48:], file_dy_tmp)
                     file_dy_tmp.flush()
                     os.fsync(file_dy_tmp.fileno())
                 
@@ -208,18 +209,18 @@ def get_data():
             except Exception as e:
                 print(e)
                 continue
-            
-            time.sleep(2)
 
-        if now.minute == 0 and now.second == 0:
+            time.sleep(1)
+            
+        elif now.minute == 0 and now.second == 0:
             try:
                 if (len(loghr) > 48):
                     loghr.pop(0)
 
                 loghr.append({
                 "time": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), 
-                "pm25_hr": statistics.mean(aqi25_hr), 
-                "pm100_hr": statistics.mean(aqi100_hr)
+                "pm25_hr": aqi_pm25(statistics.mean(aqi25_hr)), 
+                "pm100_hr": aqi_pm100(statistics.mean(aqi100_hr))
                 })
 
                 aqi25_hr.clear()
@@ -236,8 +237,8 @@ def get_data():
                 print(e)
                 continue
             
-            time.sleep(2)
-
+            time.sleep(1)
+            
         time.sleep(0.1)    
 
 @app.route('/')

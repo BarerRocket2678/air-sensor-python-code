@@ -1,9 +1,12 @@
-# SPDX-FileCopyrightText: 2021 ladyada for Adafruit Industries
-# SPDX-License-Identifier: MIT
+#For lines 21 to 51:
+    # SPDX-FileCopyrightText: 2021 ladyada for Adafruit Industries
+    # SPDX-License-Identifier: MIT
+    # Original Code: https://learn.adafruit.com/pm25-air-quality-sensor/python-and-circuitpython
 
-"""
-Example sketch to connect to PM2.5 sensor with either I2C or UART.
-"""
+#For all other lines:
+    # Written by Cody Zavodsky
+    # Debugging help from ChatGPT
+    # Technical AQI info from the US EPA: https://document.airnow.gov/technical-assistance-document-for-the-reporting-of-daily-air-quailty.pdf
 
 # pylint: disable=unused-import
 from adafruit_pm25.uart import PM25_UART
@@ -134,10 +137,18 @@ def get_data():
     aqi25_dy = []
     aqi100_dy = []
 
+    ran_within_second = false
+    ran_within_second_hr = false
+    ran_within_second_dy = false
+
     while True:
         now = datetime.datetime.utcnow().replace(microsecond=0)
         
         if now.second == 10 or now.second == 20 or now.second == 30 or now.second == 40 or now.second == 50:
+            ran_within_second = false
+            ran_within_second_hr = false
+            ran_within_second_dy = false
+            
             while True:
                 try:
                     aqdata = pm25.read()
@@ -150,7 +161,7 @@ def get_data():
                     continue
                  
                 time.sleep(1)
-        if now.second == 0 and len(aqi25_mn) != 0 and len(aqi100_mn) != 0:
+        if now.second == 0 and len(aqi25_mn) != 0 and len(aqi100_mn) != 0 and ran_within_second == false:
             try:
                 if (len(log) > 120):
                     log.pop(0)
@@ -180,12 +191,12 @@ def get_data():
             except Exception as e:
                 print(e)
                 continue
+            
+            else:
+                ran_within_second = true
 
-            time.sleep(1)
 
-
-
-        if now.hour == 0 and now.minute == 0 and now.second == 0:
+        if now.hour == 0 and now.minute == 0 and now.second == 0 and ran_within_second_dy == false:
             try:
                 if (len(logdy) > 48):
                     logdy.pop(0)
@@ -210,9 +221,10 @@ def get_data():
                 print(e)
                 continue
 
-            time.sleep(1)
-            
-        elif now.minute == 0 and now.second == 0:
+            else:
+                ran_within_second_dy = true
+
+        if now.minute == 0 and now.second == 0 and ran_within_second_hr:
             try:
                 if (len(loghr) > 48):
                     loghr.pop(0)
@@ -236,8 +248,9 @@ def get_data():
             except Exception as e:
                 print(e)
                 continue
-            
-            time.sleep(1)
+
+            else:
+                ran_within_second_hr = true
             
         time.sleep(0.1)    
 
@@ -289,36 +302,3 @@ else:
         print("Thread already running!")
 
 app.run(host='0.0.0.0', port=5000, debug=False)
-"""
-while True:
-    time.sleep(1)
-
-    try:
-        aqdata = pm25.read()
-        # print(aqdata)
-    except RuntimeError:
-        print("Unable to read from sensor, retrying...")
-        continue
-
-    print()
-    print("Concentration Units (standard)")
-    print("---------------------------------------")
-    print(
-        "PM 1.0: %d\tPM2.5: %d\tPM10: %d"
-        % (aqdata["pm10 standard"], aqdata["pm25 standard"], aqdata["pm100 standard"])
-    )
-    print("Concentration Units (environmental)")
-    print("---------------------------------------")
-    print(
-        "PM 1.0: %d\tPM2.5: %d\tPM10: %d"
-        % (aqdata["pm10 env"], aqdata["pm25 env"], aqdata["pm100 env"])
-    )
-    print("---------------------------------------")
-    print("Particles > 0.3um / 0.1L air:", aqdata["particles 03um"])
-    print("Particles > 0.5um / 0.1L air:", aqdata["particles 05um"])
-    print("Particles > 1.0um / 0.1L air:", aqdata["particles 10um"])
-    print("Particles > 2.5um / 0.1L air:", aqdata["particles 25um"])
-    print("Particles > 5.0um / 0.1L air:", aqdata["particles 50um"])
-    print("Particles > 10 um / 0.1L air:", aqdata["particles 100um"])
-    print("---------------------------------------")
-"""

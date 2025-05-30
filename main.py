@@ -137,17 +137,17 @@ def get_data():
     aqi25_dy = []
     aqi100_dy = []
 
-    ran_within_second = false
-    ran_within_second_hr = false
-    ran_within_second_dy = false
+    ran_within_second = False
+    ran_within_second_hr = False
+    ran_within_second_dy = False
 
     while True:
         now = datetime.datetime.utcnow().replace(microsecond=0)
         
         if now.second == 10 or now.second == 20 or now.second == 30 or now.second == 40 or now.second == 50:
-            ran_within_second = false
-            ran_within_second_hr = false
-            ran_within_second_dy = false
+            ran_within_second = False
+            ran_within_second_hr = False
+            ran_within_second_dy = False
             
             while True:
                 try:
@@ -161,7 +161,7 @@ def get_data():
                     continue
                  
                 time.sleep(1)
-        if now.second == 0 and len(aqi25_mn) != 0 and len(aqi100_mn) != 0 and ran_within_second == false:
+        if now.second == 0 and len(aqi25_mn) != 0 and len(aqi100_mn) != 0 and ran_within_second == False:
             try:
                 if (len(log) > 120):
                     log.pop(0)
@@ -193,10 +193,10 @@ def get_data():
                 continue
             
             else:
-                ran_within_second = true
+                ran_within_second = True
 
 
-        if now.hour == 0 and now.minute == 0 and now.second == 0 and ran_within_second_dy == false:
+        if now.hour == 0 and now.minute == 0 and now.second == 0 and ran_within_second_dy == False:
             try:
                 if (len(logdy) > 48):
                     logdy.pop(0)
@@ -222,9 +222,9 @@ def get_data():
                 continue
 
             else:
-                ran_within_second_dy = true
+                ran_within_second_dy = True
 
-        if now.minute == 0 and now.second == 0 and ran_within_second_hr:
+        if now.minute == 0 and now.second == 0 and ran_within_second_hr == False:
             try:
                 if (len(loghr) > 48):
                     loghr.pop(0)
@@ -250,7 +250,7 @@ def get_data():
                 continue
 
             else:
-                ran_within_second_hr = true
+                ran_within_second_hr = True
             
         time.sleep(0.1)    
 

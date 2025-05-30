@@ -1,3 +1,7 @@
+// Written by Cody Zavodsky
+// Debugging help from ChatGPT
+// Technical AQI info from the US EPA: https://document.airnow.gov/technical-assistance-document-for-the-reporting-of-daily-air-quailty.pdf
+
 let dataChart;
 let dataChart_hr;
 let dataChart_dy;
@@ -383,8 +387,8 @@ window.onload = function() {
                                 let status = "Good";
                                 let effects = ["Effects: None.", "Effects: Consider reducing exertion for sensitive people.", "Effects: Reduce exertion for sensitive people, people with asthma, and people with heart disease.", "Effects: Avoid exertion for sensitive people, people with asthma, and people with heart disease. The general public should reduce exertion.", "Effects: Avoid all activity for sensitive people, people with asthma, and people with heart disease. The general public should avoid exertion.", "Effects: Avoid contact with contaminated air for sensitive people, people with asthma, and people with heart disease. The general public should avoid all activity"]; 
                                 if (pm25[pm25.length - 1] > pm100[pm100.length - 1]) {
-                                        if(pm25[pm25.length - 1] == 500) {            
-                                                document.getElementById("Status").innerHTML = "Status: Hazardous (DANGER: Levels have hit the max of the AQI system!)";
+                                        if(pm25[pm25.length - 1] > 500) {            
+                                                document.getElementById("Status").innerHTML = "Status: Hazardous (DANGER: Levels have exceeded the max (500) of the AQI system!)";
                                                 document.getElementById("Effects").innerHTML = effects[5];
                                         }
                                         else if(pm25[pm25.length - 1] > 300) {
@@ -412,8 +416,8 @@ window.onload = function() {
                                                 document.getElementById("Effects").innerHTML = effects[0];
                                         }
                                 } else {
-                                        if(pm100[pm100.length - 1] == 500) {            
-                                                document.getElementById("Status").innerHTML = "Status: Hazardous (DANGER: Levels have hit the max of the AQI system!)";
+                                        if(pm100[pm100.length - 1] > 500) {            
+                                                document.getElementById("Status").innerHTML = "Status: Hazardous (DANGER: Levels have exceeded the max (500) of the AQI system!)";
                                                 document.getElementById("Effects").innerHTML = effects[5];
                                         }
                                         else if(pm100[pm100.length - 1] > 300) {

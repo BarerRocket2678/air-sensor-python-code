@@ -1,5 +1,5 @@
 // Written by Cody Zavodsky
-// Debugging help from ChatGPT
+// Programming Assistance from ChatGPT
 // Technical AQI info from the US EPA: https://document.airnow.gov/technical-assistance-document-for-the-reporting-of-daily-air-quailty.pdf
 
 let dataChart;
@@ -134,6 +134,8 @@ window.onload = function() {
                                         },
                                         pointBackgroundColor: 'white',
                                         pointBorderColor: 'white',
+                                        tension: 1,
+                                        cubicInterpolationMode: 'monotone'
                                 },
                                 {
                                         label: 'PM 10.0',
@@ -155,6 +157,8 @@ window.onload = function() {
                                         },
                                         pointBackgroundColor: 'black',
                                         pointBorderColor: 'black',
+                                        tension: 1,
+                                        cubicInterpolationMode: 'monotone'
                                 }
 
                         ]
@@ -206,7 +210,8 @@ window.onload = function() {
                                         },
                                         pointBackgroundColor: 'white',
                                         pointBorderColor: 'white',
-                                        tension: 0.5
+                                        tension: 1,
+                                        cubicInterpolationMode: 'monotone'
                                 },
                                 {
                                         label: 'PM 10.0 hour mean',
@@ -229,7 +234,8 @@ window.onload = function() {
                                         },
                                         pointBackgroundColor: 'black',
                                         pointBorderColor: 'black',
-                                        tension: 0.5
+                                        tension: 1,
+                                        cubicInterpolationMode: 'monotone'
                                 }
 
                         ]
@@ -282,7 +288,8 @@ window.onload = function() {
                                         },
                                         pointBackgroundColor: 'white',
                                         pointBorderColor: 'white',
-                                        tension: 0.5
+                                        tension: 1,
+                                        cubicInterpolationMode: 'monotone'
                                 },
                                 {
                                         label: 'PM 10.0 day mean',
@@ -305,7 +312,8 @@ window.onload = function() {
                                         },
                                         pointBackgroundColor: 'black',
                                         pointBorderColor: 'black',
-                                        tension: 0.5
+                                        tension: 1,
+                                        cubicInterpolationMode: 'monotone'
                                 }
 
                         ]

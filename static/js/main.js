@@ -397,60 +397,60 @@ window.onload = function() {
                                 if (pm25_dy[pm25_dy.length - 1] > pm100_dy[pm100_dy.length - 1]) {
                                         if(pm25_dy[pm25_dy.length - 1] > 500) {            
                                                 document.getElementById("Status").innerHTML = "Status: Hazardous (DANGER: Levels have exceeded the max (500) of the AQI system!)";
-                                                document.getElementById("Effects").innerHTML = effects[5];
+                                                document.getElementById("Recomendations").innerHTML = effects[5];
                                         }
                                         else if(pm25_dy[pm25_dy.length - 1] > 300) {
                                                 document.getElementById("Status").innerHTML = "Status: Hazardous";
-                                                document.getElementById("Effects").innerHTML = effects[5];
+                                                document.getElementById("Recomendations").innerHTML = effects[5];
                                         }
                                         else if(pm25_dy[pm25_dy.length - 1] > 200) {
                                                 document.getElementById("Status").innerHTML = "Status: Very Unhealthy";
-                                                document.getElementById("Effects").innerHTML = effects[4];
+                                                document.getElementById("Recomendations").innerHTML = effects[4];
                                         }
                                         else if(pm25_dy[pm25_dy.length - 1] > 150) {
                                                 document.getElementById("Status").innerHTML = "Status: Unhealthy";
-                                                document.getElementById("Effects").innerHTML = effects[3];
+                                                document.getElementById("Recomendations").innerHTML = effects[3];
                                         }
                                         else if(pm25_dy[pm25_dy.length - 1] > 100) {
                                                 document.getElementById("Status").innerHTML = "Status: Unhealthy for sensitive groups";
-                                                document.getElementById("Effects").innerHTML = effects[2];
+                                                document.getElementById("Recomendations").innerHTML = effects[2];
                                         }
                                         else if(pm25_dy[pm25_dy.length - 1] > 50) {
                                                 document.getElementById("Status").innerHTML = "Status: Moderate";
-                                                document.getElementById("Effects").innerHTML = effects[1];
+                                                document.getElementById("Recomendations").innerHTML = effects[1];
                                         }
                                         else if(pm25_dy[pm25_dy.length - 1] >= 0) {
                                                 document.getElementById("Status").innerHTML = "Status: Good";
-                                                document.getElementById("Effects").innerHTML = effects[0];
+                                                document.getElementById("Recomendations").innerHTML = effects[0];
                                         }
                                 } else {
                                         if(pm100_dy[pm100_dy.length - 1] > 500) {            
                                                 document.getElementById("Status").innerHTML = "Status: Hazardous (DANGER: Levels have exceeded the max (500) of the AQI system!)";
-                                                document.getElementById("Effects").innerHTML = effects[5];
+                                                document.getElementById("Recomendations").innerHTML = effects[5];
                                         }
                                         else if(pm100_dy[pm100_dy.length - 1] > 300) {
                                                 document.getElementById("Status").innerHTML = "Status: Hazardous";
-                                                document.getElementById("Effects").innerHTML = effects[5];
+                                                document.getElementById("Recomendations").innerHTML = effects[5];
                                         }
                                         else if(pm100_dy[pm100_dy.length - 1] > 200) {
                                                 document.getElementById("Status").innerHTML = "Status: Very Unhealthy";
-                                                document.getElementById("Effects").innerHTML = effects[4];
+                                                document.getElementById("Recomendations").innerHTML = effects[4];
                                         }
                                         else if(pm100_dy[pm100_dy.length - 1] > 150) {
                                                 document.getElementById("Status").innerHTML = "Status: Unhealthy";
-                                                document.getElementById("Effects").innerHTML = effects[3];
+                                                document.getElementById("Recomendations").innerHTML = effects[3];
                                         }
                                         else if(pm100_dy[pm100_dy.length - 1] > 100) {
                                                 document.getElementById("Status").innerHTML = "Status: Unhealthy for sensitive groups";
-                                                document.getElementById("Effects").innerHTML = effects[2];
+                                                document.getElementById("Recomendations").innerHTML = effects[2];
                                         }
                                         else if(pm100_dy[pm100_dy.length - 1] > 50) {
                                                 document.getElementById("Status").innerHTML = "Status: Moderate";
-                                                document.getElementById("Effects").innerHTML = effects[1];
+                                                document.getElementById("Recomendations").innerHTML = effects[1];
                                         }
                                         else if(pm100_dy[pm100_dy.length - 1] >= 0) {
                                                 document.getElementById("Status").innerHTML = "Status: Good";
-                                                document.getElementById("Effects").innerHTML = effects[0];
+                                                document.getElementById("Recomendations").innerHTML = effects[0];
                                         }
                                 }
                         }
